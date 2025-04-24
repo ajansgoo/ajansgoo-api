@@ -1,3 +1,4 @@
+// authController.js gibi dosyalarda:
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/db");
