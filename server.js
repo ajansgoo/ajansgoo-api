@@ -12,8 +12,13 @@ const app = express();
 // 🧠 Middleware'ler
 app.use(express.json());
 app.use(cookieParser());
+
+// 🌐 CORS Ayarları – Railway ve tarayıcıdan gelen tüm domainler için izin
 app.use(cors({
-  origin: true, // Railway dışındaki istekleri de alabilsin
+  origin: [
+    "http://localhost:3000",
+    "https://ajansgoo-api-production.up.railway.app"
+  ],
   credentials: true
 }));
 
