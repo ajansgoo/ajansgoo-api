@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
@@ -14,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: true, // Railway dışındaki istekleri de alabilsin
   credentials: true
 }));
 
