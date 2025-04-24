@@ -6,6 +6,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // ✅ Kullanıcı Kaydı
 exports.register = async (req, res) => {
+  console.log("✅ register endpoint hit"); // BURAYA EKLE
   const { isim, email, telefon, password } = req.body;
 
   if (!telefon || !password) {

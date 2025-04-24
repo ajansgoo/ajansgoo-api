@@ -35,3 +35,9 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 AjansGoo API ${PORT} portunda çalışıyor...`);
 });
+
+// 🌐 Global Hata Yakalama
+app.use((err, req, res, next) => {
+  console.error("🚨 Beklenmeyen Sunucu Hatası:", err);
+  res.status(500).json({ message: "Sunucu hatası!" });
+});
