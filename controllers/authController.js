@@ -36,12 +36,12 @@ exports.register = async (req, res) => {
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
-  const { phone, password } = req.body;
+  const { telefon, password } = req.body;
 
   try {
     const result = await pool.query(
       "SELECT * FROM users WHERE telefon = $1",
-      [phone]
+      [telefon]
     );
     const user = result.rows[0];
 
@@ -60,13 +60,13 @@ exports.login = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 15 // 15 dk
+      maxAge: 1000 * 60 * 15
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 gün
+      maxAge: 1000 * 60 * 60 * 24 * 7
     });
 
     res.json({ message: "Giriş başarılı", role: user.rol });
