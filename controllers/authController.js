@@ -35,12 +35,13 @@ exports.register = async (req, res) => {
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
-  const { phone, password } = req.body; // <-- BURASI GÜNCELLENDİ
+  const { phone, password } = req.body;
+  const telefon = phone; // gelen "phone" verisini veritabanına uygun hale getir
 
   try {
     const result = await pool.query(
       "SELECT * FROM users WHERE telefon = $1",
-      [phone]
+      [telefon]
     );
     const user = result.rows[0];
 
@@ -59,13 +60,13 @@ exports.login = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 15 // 15 dk
+      maxAge: 1000 * 60 * 15
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 gün
+      maxAge: 1000 * 60 * 60 * 24 * 7
     });
 
     res.json({ message: "Giriş başarılı", role: user.rol });
@@ -85,8 +86,9 @@ exports.logout = (req, res) => {
 // ✅ Access Token Yenileme
 exports.refresh = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken)
+  if (!refreshToken) {
     return res.status(401).json({ message: "Token yok" });
+  }
 
   try {
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
@@ -105,6 +107,6 @@ exports.refresh = (req, res) => {
     res.json({ message: "Yeni access token verildi" });
   } catch (err) {
     console.error("Refresh token hatası:", err);
-    return res.status(403).json({ message: "Geçersiz token" });
+    res.status(403).json({ message: "Geçersiz token" });
   }
 };
