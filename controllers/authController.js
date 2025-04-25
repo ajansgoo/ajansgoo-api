@@ -1,4 +1,3 @@
-// authController.js gibi dosyalarda:
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/db");
@@ -6,7 +5,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // ✅ Kullanıcı Kaydı
 exports.register = async (req, res) => {
-  console.log("✅ register endpoint hit"); // BURAYA EKLE
+  console.log("✅ register endpoint hit");
   const { isim, email, telefon, password } = req.body;
 
   if (!telefon || !password) {
@@ -36,12 +35,12 @@ exports.register = async (req, res) => {
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
-  const { telefon, password } = req.body;
+  const { phone, password } = req.body; // <-- BURASI GÜNCELLENDİ
 
   try {
     const result = await pool.query(
       "SELECT * FROM users WHERE telefon = $1",
-      [telefon]
+      [phone]
     );
     const user = result.rows[0];
 
@@ -60,13 +59,13 @@ exports.login = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 15
+      maxAge: 1000 * 60 * 15 // 15 dk
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 gün
     });
 
     res.json({ message: "Giriş başarılı", role: user.rol });
