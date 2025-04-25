@@ -35,7 +35,8 @@ exports.register = async (req, res) => {
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
-  const { telefon, password } = req.body;
+  const { phone, password } = req.body; // gelen veri "phone"
+  const telefon = phone; // bizim veritabanımız "telefon" sütunu kullanıyor
 
   try {
     const result = await pool.query(
@@ -74,7 +75,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Sunucu hatası" });
   }
 };
-
 
 // ✅ Kullanıcı Çıkışı
 exports.logout = (req, res) => {
