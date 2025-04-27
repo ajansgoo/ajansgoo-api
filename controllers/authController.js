@@ -1,4 +1,4 @@
-// guncellenmis authController.js
+// app/controllers/authController.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/db");
@@ -6,7 +6,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // ✅ Kullanıcı Kaydı
 exports.register = async (req, res) => {
-  console.log("\u2705 register endpoint hit");
+  console.log("✅ register endpoint hit");
   const { isim, email, telefon, password } = req.body;
 
   if (!telefon || !password) {
@@ -24,20 +24,20 @@ exports.register = async (req, res) => {
     );
 
     res.status(201).json({
-      message: "Kıyat başarılı",
+      message: "Kayıt başarılı",
       userId: result.rows[0].id,
       rol: result.rows[0].rol
     });
   } catch (err) {
-    console.error("Kıyat hatası:", err);
-    res.status(500).json({ message: "Kıyat sırasında hata oluştu." });
+    console.error("Kayıt hatası:", err);
+    res.status(500).json({ message: "Kayıt sırasında hata oluştu." });
   }
 };
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
   const { phone, password } = req.body;
-  const telefon = phone; // gelen "phone" verisini veritabanı "telefon" alanına uyduruyoruz
+  const telefon = phone;
 
   try {
     const result = await pool.query(
@@ -61,13 +61,13 @@ exports.login = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 15
+      maxAge: 1000 * 60 * 15 // 15 dakika
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 gün
     });
 
     res.json({ message: "Giriş başarılı", role: user.rol });
@@ -102,7 +102,7 @@ exports.refresh = (req, res) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 15
+      maxAge: 1000 * 60 * 15 // 15 dakika
     });
 
     res.json({ message: "Yeni access token verildi" });
