@@ -1,3 +1,4 @@
+// guncellenmis authController.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/db");
@@ -5,7 +6,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // ✅ Kullanıcı Kaydı
 exports.register = async (req, res) => {
-  console.log("✅ register endpoint hit");
+  console.log("\u2705 register endpoint hit");
   const { isim, email, telefon, password } = req.body;
 
   if (!telefon || !password) {
@@ -16,31 +17,31 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO users (isim, email, telefon, parola_hash)
+      `INSERT INTO kullanicilar (isim, email, telefon, sifre_hash)
        VALUES ($1, $2, $3, $4)
        RETURNING id, rol`,
       [isim || null, email || null, telefon, hashedPassword]
     );
 
     res.status(201).json({
-      message: "Kayıt başarılı",
+      message: "Kıyat başarılı",
       userId: result.rows[0].id,
       rol: result.rows[0].rol
     });
   } catch (err) {
-    console.error("Kayıt hatası:", err);
-    res.status(500).json({ message: "Kayıt sırasında hata oluştu." });
+    console.error("Kıyat hatası:", err);
+    res.status(500).json({ message: "Kıyat sırasında hata oluştu." });
   }
 };
 
 // ✅ Kullanıcı Girişi
 exports.login = async (req, res) => {
-  const { phone, password } = req.body; // gelen veri "phone"
-  const telefon = phone; // bizim veritabanımız "telefon" sütunu kullanıyor
+  const { phone, password } = req.body;
+  const telefon = phone; // gelen "phone" verisini veritabanı "telefon" alanına uyduruyoruz
 
   try {
     const result = await pool.query(
-      "SELECT * FROM users WHERE telefon = $1",
+      "SELECT * FROM kullanicilar WHERE telefon = $1",
       [telefon]
     );
     const user = result.rows[0];
@@ -49,7 +50,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Telefon numarası geçersiz" });
     }
 
-    const match = await bcrypt.compare(password, user.parola_hash);
+    const match = await bcrypt.compare(password, user.sifre_hash);
     if (!match) {
       return res.status(401).json({ message: "Şifre hatalı" });
     }
